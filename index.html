@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Case Simulator ВК</title>
+    <title>Case Simulator Images</title>
     <style>
         :root {
             --bg-color: #1b1b1b;
@@ -24,198 +24,122 @@
             user-select: none;
         }
 
-        /* --- Верхняя панель --- */
-        .header {
-            padding: 15px;
-            background: #222;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
-            z-index: 20;
+        /* --- Стили для картинок --- */
+        .item-image {
+            width: 60px;
+            height: 60px;
+            object-fit: contain; /* Чтобы картинка не растягивалась */
+            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5)); /* Тень под предметом */
         }
-        .balance-box { font-size: 18px; font-weight: bold; color: var(--green); }
-        .inv-btn {
-            background: #333; border: 1px solid #555; color: white;
-            padding: 8px 15px; border-radius: 8px; font-size: 14px; cursor: pointer;
+        
+        /* Большая картинка в окне выигрыша */
+        .win-img-big {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 0 15px rgba(255,255,255,0.2));
         }
 
-        /* --- Экраны --- */
-        .screen {
-            flex: 1;
-            display: none; /* Скрываем все экраны по умолчанию */
-            flex-direction: column;
-            overflow-y: auto; /* Прокрутка для меню */
-            padding-bottom: 20px;
+        /* Иконка кейса в меню */
+        .case-img-icon {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            margin-bottom: 10px;
         }
+
+        /* Остальные стили */
+        .header { padding: 15px; background: #222; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.5); z-index: 20; }
+        .balance-box { font-size: 18px; font-weight: bold; color: var(--green); }
+        .inv-btn { background: #333; border: 1px solid #555; color: white; padding: 8px 15px; border-radius: 8px; font-size: 14px; cursor: pointer; }
+
+        .screen { flex: 1; display: none; flex-direction: column; overflow-y: auto; padding-bottom: 20px; }
         .active-screen { display: flex; }
 
-        /* --- Экран 1: Список кейсов --- */
-        .case-list {
-            padding: 20px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-        .case-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 15px;
-            text-align: center;
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: transform 0.1s;
-        }
+        .case-list { padding: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .case-card { background: var(--card-bg); border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; border: 2px solid transparent; transition: transform 0.1s; }
         .case-card:active { transform: scale(0.95); }
-        .case-icon { font-size: 50px; margin-bottom: 10px; display: block; }
         .case-name { font-weight: bold; margin-bottom: 5px; font-size: 14px; }
         .case-price { color: var(--accent); font-weight: bold; font-size: 14px; }
 
-        /* --- Экран 2: Рулетка --- */
-        .game-area {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-        }
-        .back-btn {
-            position: absolute; top: 70px; left: 20px;
-            background: none; border: none; color: #888; font-size: 16px; cursor: pointer;
-        }
-        .roulette-container {
-            position: relative;
-            width: 100%;
-            height: 140px;
-            background: #111;
-            border-top: 2px solid #444;
-            border-bottom: 2px solid #444;
-            overflow: hidden;
-            margin: 20px 0;
-        }
-        .center-line {
-            position: absolute; left: 50%; top: 0; bottom: 0;
-            width: 4px; background: var(--accent);
-            transform: translateX(-50%); z-index: 5;
-            box-shadow: 0 0 10px var(--accent);
-        }
+        .game-area { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; }
+        .back-btn { position: absolute; top: 70px; left: 20px; background: none; border: none; color: #888; font-size: 16px; cursor: pointer; }
+        .roulette-container { position: relative; width: 100%; height: 140px; background: #111; border-top: 2px solid #444; border-bottom: 2px solid #444; overflow: hidden; margin: 20px 0; }
+        .center-line { position: absolute; left: 50%; top: 0; bottom: 0; width: 4px; background: var(--accent); transform: translateX(-50%); z-index: 5; box-shadow: 0 0 10px var(--accent); }
         .strip { display: flex; height: 100%; align-items: center; }
         
-        /* Карточка предмета */
-        .item {
-            min-width: 100px; height: 100px; margin: 0 5px;
-            background: #252525; border-radius: 8px;
-            display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            font-size: 30px; border-bottom: 4px solid #555;
-            position: relative;
-        }
+        .item { min-width: 100px; height: 100px; margin: 0 5px; background: #252525; border-radius: 8px; display: flex; flex-direction: column; justify-content: center; align-items: center; font-size: 30px; border-bottom: 4px solid #555; position: relative; }
         .item span { font-size: 10px; margin-top: 5px; color: #ccc; }
         
-        /* Редкость */
-        .r-1 { border-color: #b0c3d9; } /* Обычное */
-        .r-2 { border-color: #5e98d9; } /* Редкое */
-        .r-3 { border-color: #8847ff; } /* Эпик */
-        .r-4 { border-color: #d32ce6; } /* Легенда */
-        .r-5 { border-color: #eb4b4b; } /* Мифик */
-        .r-6 { border-color: #ffd700; box-shadow: 0 0 10px #ffd700; } /* Золото */
+        .r-1 { border-color: #b0c3d9; } 
+        .r-2 { border-color: #5e98d9; } 
+        .r-3 { border-color: #8847ff; } 
+        .r-4 { border-color: #d32ce6; } 
+        .r-5 { border-color: #eb4b4b; } 
+        .r-6 { border-color: #ffd700; box-shadow: 0 0 10px #ffd700; } 
 
-        .spin-btn {
-            background: linear-gradient(90deg, #fdc830 0%, #f37335 100%);
-            border: none; padding: 15px 60px; color: white;
-            font-size: 20px; font-weight: bold; border-radius: 30px;
-            box-shadow: 0 5px 20px rgba(243, 115, 53, 0.4);
-        }
+        .spin-btn { background: linear-gradient(90deg, #fdc830 0%, #f37335 100%); border: none; padding: 15px 60px; color: white; font-size: 20px; font-weight: bold; border-radius: 30px; box-shadow: 0 5px 20px rgba(243, 115, 53, 0.4); }
         .spin-btn:disabled { filter: grayscale(1); opacity: 0.5; }
 
-        /* --- Экран 3: Инвентарь --- */
-        .inventory-grid {
-            padding: 20px;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-        }
-        .inv-item {
-            background: #252525; padding: 10px; border-radius: 8px;
-            text-align: center; position: relative;
-        }
-        .inv-sell-one {
-            margin-top: 5px; background: #333; color: var(--green);
-            border: none; width: 100%; padding: 4px; border-radius: 4px; font-size: 12px;
-        }
+        .inventory-grid { padding: 20px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .inv-item { background: #252525; padding: 10px; border-radius: 8px; text-align: center; position: relative; }
+        .inv-sell-one { margin-top: 5px; background: #333; color: var(--green); border: none; width: 100%; padding: 4px; border-radius: 4px; font-size: 12px; }
         .empty-msg { text-align: center; color: #666; margin-top: 50px; width: 100%; }
 
-        /* --- Модальное окно --- */
-        #win-modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); z-index: 100;
-            flex-direction: column; justify-content: center; align-items: center;
-            animation: fadeIn 0.3s;
-        }
-        .win-card {
-            background: #222; padding: 25px; border-radius: 20px;
-            text-align: center; width: 280px; border: 2px solid #444;
-        }
-        .win-img { font-size: 80px; margin-bottom: 10px; }
+        #win-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 100; flex-direction: column; justify-content: center; align-items: center; animation: fadeIn 0.3s; }
+        .win-card { background: #222; padding: 25px; border-radius: 20px; text-align: center; width: 280px; border: 2px solid #444; }
         .btn-group { display: flex; gap: 10px; margin-top: 20px; }
         .btn-action { flex: 1; padding: 12px; border: none; border-radius: 8px; color: white; font-weight: bold; font-size: 14px; }
         .btn-sell { background: var(--green); }
         .btn-keep { background: #5181b8; }
-
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
-    <!-- Шапка -->
     <div class="header">
-        <div class="balance-box" id="balance">5000 $</div>
+        <div class="balance-box" id="balance">Загрузка...</div>
         <button class="inv-btn" onclick="showInventory()">🎒 Инвентарь</button>
     </div>
 
-    <!-- 1. МЕНЮ КЕЙСОВ -->
+    <!-- МЕНЮ -->
     <div id="screen-menu" class="screen active-screen">
-        <div style="padding: 20px; text-align: center; color: #888;">Выберите кейс:</div>
-        <div class="case-list" id="cases-container">
-            <!-- Сюда вставятся кейсы через JS -->
-        </div>
+        <div style="padding: 20px; text-align: center; color: #888;">Магазин кейсов</div>
+        <div class="case-list" id="cases-container"></div>
     </div>
 
-    <!-- 2. ЭКРАН ИГРЫ (Рулетка) -->
+    <!-- ИГРА -->
     <div id="screen-game" class="screen">
-        <button class="back-btn" onclick="showMenu()">← Назад к кейсам</button>
+        <button class="back-btn" onclick="showMenu()">← Назад</button>
         <div class="game-area">
-            <h2 id="current-case-name" style="margin-bottom: 0;">Название</h2>
+            <h2 id="current-case-name">Название</h2>
             <div id="current-case-price" style="color: #888; margin-bottom: 20px;">0 $</div>
-
             <div class="roulette-container">
                 <div class="center-line"></div>
                 <div class="strip" id="strip"></div>
             </div>
-
             <button class="spin-btn" id="spin-btn" onclick="spin()">ОТКРЫТЬ</button>
         </div>
     </div>
 
-    <!-- 3. ЭКРАН ИНВЕНТАРЯ -->
+    <!-- ИНВЕНТАРЬ -->
     <div id="screen-inventory" class="screen">
         <button class="back-btn" style="position:static; margin: 15px;" onclick="showMenu()">← Назад</button>
-        <div class="inventory-grid" id="inventory-grid">
-            <!-- Предметы -->
-        </div>
+        <div class="inventory-grid" id="inventory-grid"></div>
         <button onclick="sellAll()" style="margin: 20px; padding: 15px; background: var(--red); color: white; border:none; border-radius: 10px;">ПРОДАТЬ ВСЁ</button>
     </div>
 
-    <!-- Окно победы -->
+    <!-- ОКНО ВЫИГРЫША -->
     <div id="win-modal">
         <div class="win-card" id="win-card-ui">
-            <div class="win-img" id="win-icon">🎁</div>
+            <!-- Сюда вставится картинка -->
+            <img src="" id="win-img-src" class="win-img-big">
             <h3 id="win-name">Предмет</h3>
-            <p style="color: #aaa;" id="win-price-text">Стоимость: 100 $</p>
-            
+            <p style="color: #aaa;" id="win-price-text">Стоимость: 0 $</p>
             <div class="btn-group">
-                <button class="btn-action btn-sell" onclick="actionSell()">💰 Продать<br><span id="sell-price-btn" style="font-size:11px">+100$</span></button>
-                <button class="btn-action btn-keep" onclick="actionKeep()">🎒 В инвентарь</button>
+                <button class="btn-action btn-sell" onclick="actionSell()">💰 Продать<br><span id="sell-price-btn">+0$</span></button>
+                <button class="btn-action btn-keep" onclick="actionKeep()">🎒 Оставить</button>
             </div>
         </div>
     </div>
@@ -223,67 +147,52 @@
     <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
     <script>
         vkBridge.send('VKWebAppInit');
-
-        // --- ДАННЫЕ ИГРЫ ---
+        
         let balance = 5000;
         let inventory = [];
         let currentCaseId = null;
         let currentWonItem = null;
 
-        // Предметы (общий пул)
+        // --- ВАЖНО: ССЫЛКИ НА КАРТИНКИ ---
+        // Если ты загрузил картинки на GitHub в ту же папку, пиши просто имя файла: 'iphone.png'
+        // Я пока поставил ссылки из интернета для примера.
+        
         const itemsDB = {
             garbage: [
-                { name: "Стикер", icon: "📄", price: 10, rarity: 1 },
-                { name: "Чехол", icon: "📱", price: 50, rarity: 1 },
-                { name: "Флешка", icon: "💾", price: 80, rarity: 1 },
+                { name: "Стикер", img: "https://cdn-icons-png.flaticon.com/512/4525/4525026.png", price: 10, rarity: 1 },
+                { name: "Носок", img: "https://cdn-icons-png.flaticon.com/512/2310/2310237.png", price: 50, rarity: 1 },
             ],
             low: [
-                { name: "Наушники", icon: "🎧", price: 200, rarity: 2 },
-                { name: "Клавиатура", icon: "⌨️", price: 400, rarity: 2 },
-                { name: "Мышь", icon: "🖱️", price: 300, rarity: 2 },
+                { name: "Наушники", img: "https://cdn-icons-png.flaticon.com/512/5906/5906124.png", price: 200, rarity: 2 },
+                { name: "Клавиатура", img: "https://cdn-icons-png.flaticon.com/512/9839/9839446.png", price: 400, rarity: 2 },
             ],
             mid: [
-                { name: "Часы", icon: "⌚", price: 800, rarity: 3 },
-                { name: "iPhone 12", icon: "📱", price: 1200, rarity: 3 },
-                { name: "iPad", icon: "📟", price: 1500, rarity: 3 },
+                { name: "iPhone 13", img: "https://cdn-icons-png.flaticon.com/512/644/644458.png", price: 1200, rarity: 3 },
+                { name: "PlayStation 5", img: "https://cdn-icons-png.flaticon.com/512/5906/5906062.png", price: 800, rarity: 3 },
             ],
             high: [
-                { name: "MacBook", icon: "💻", price: 3000, rarity: 4 },
-                { name: "PC Gamer", icon: "🖥️", price: 5000, rarity: 4 },
+                { name: "MacBook", img: "https://cdn-icons-png.flaticon.com/512/2000/2000282.png", price: 3000, rarity: 4 },
+                { name: "Игровой ПК", img: "https://cdn-icons-png.flaticon.com/512/1792/1792525.png", price: 5000, rarity: 4 },
             ],
             super: [
-                { name: "Tesla", icon: "🚗", price: 50000, rarity: 5 },
-                { name: "Дом", icon: "🏠", price: 150000, rarity: 5 },
+                { name: "Tesla Model S", img: "https://cdn-icons-png.flaticon.com/512/3202/3202926.png", price: 50000, rarity: 5 },
+                { name: "Вилла", img: "https://cdn-icons-png.flaticon.com/512/2412/2412695.png", price: 150000, rarity: 5 },
             ],
             god: [
-                { name: "Яхта", icon: "🛥️", price: 500000, rarity: 6 },
-                { name: "Самолет", icon: "✈️", price: 2000000, rarity: 6 },
+                { name: "Яхта", img: "https://cdn-icons-png.flaticon.com/512/2942/2942080.png", price: 500000, rarity: 6 },
+                { name: "Самолет", img: "https://cdn-icons-png.flaticon.com/512/2204/2204344.png", price: 2000000, rarity: 6 },
             ]
         };
 
-        // Кейсы (настройки шансов)
         const cases = [
-            {
-                id: 0, name: "Бомж Бокс", price: 100, icon: "📦",
-                pool: [...itemsDB.garbage, ...itemsDB.low], // Мусор + Дешевое
-                weights: [70, 30] // 70% мусор, 30% норм
-            },
-            {
-                id: 1, name: "Мажор Бокс", price: 1000, icon: "💼",
-                pool: [...itemsDB.low, ...itemsDB.mid, ...itemsDB.high],
-                weights: [50, 40, 10] // Рискованно
-            },
-            {
-                id: 2, name: "Олигарх Бокс", price: 10000, icon: "💎",
-                pool: [...itemsDB.mid, ...itemsDB.high, ...itemsDB.super, ...itemsDB.god],
-                weights: [50, 30, 15, 5] // Шанс на самолет
-            }
+            { id: 0, name: "Бомж Бокс", price: 100, img: "https://cdn-icons-png.flaticon.com/512/679/679720.png", pool: [...itemsDB.garbage, ...itemsDB.low], weights: [70, 30] },
+            { id: 1, name: "Мажор Бокс", price: 1000, img: "https://cdn-icons-png.flaticon.com/512/2983/2983870.png", pool: [...itemsDB.low, ...itemsDB.mid, ...itemsDB.high], weights: [50, 40, 10] },
+            { id: 2, name: "Олигарх Бокс", price: 10000, img: "https://cdn-icons-png.flaticon.com/512/2721/2721115.png", pool: [...itemsDB.mid, ...itemsDB.high, ...itemsDB.super, ...itemsDB.god], weights: [50, 30, 15, 5] }
         ];
 
-        // --- UI ФУНКЦИИ ---
-        function updateBalance() {
-            document.getElementById('balance').innerText = balance + " $";
-        }
+        // --- ЛОГИКА ОТОБРАЖЕНИЯ (Теперь с <img>) ---
+
+        function updateBalance() { document.getElementById('balance').innerText = balance + " $"; }
 
         function renderCases() {
             const container = document.getElementById('cases-container');
@@ -292,8 +201,9 @@
                 const div = document.createElement('div');
                 div.className = 'case-card';
                 div.onclick = () => openGame(c.id);
+                // Тут мы вставляем картинку кейса
                 div.innerHTML = `
-                    <span class="case-icon">${c.icon}</span>
+                    <img src="${c.img}" class="case-img-icon">
                     <div class="case-name">${c.name}</div>
                     <div class="case-price">${c.price} $</div>
                 `;
@@ -301,30 +211,23 @@
             });
         }
 
-        function switchScreen(screenName) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
-            document.getElementById('screen-' + screenName).classList.add('active-screen');
-        }
-
-        function showMenu() { switchScreen('menu'); }
-        
-        function showInventory() {
-            renderInventory();
-            switchScreen('inventory');
+        function createCard(item) {
+            const div = document.createElement('div');
+            div.className = `item r-${item.rarity}`;
+            // Тут мы вставляем картинку предмета
+            div.innerHTML = `<img src="${item.img}" class="item-image"><span>${item.price}$</span>`;
+            return div;
         }
 
         function renderInventory() {
             const grid = document.getElementById('inventory-grid');
             grid.innerHTML = '';
-            if (inventory.length === 0) {
-                grid.innerHTML = '<div class="empty-msg">Пусто...</div>';
-                return;
-            }
+            if (inventory.length === 0) { grid.innerHTML = '<div class="empty-msg">Пусто...</div>'; return; }
             inventory.forEach((item, index) => {
                 const div = document.createElement('div');
                 div.className = `inv-item r-${item.rarity}`;
                 div.innerHTML = `
-                    <div style="font-size:30px">${item.icon}</div>
+                    <img src="${item.img}" class="item-image">
                     <div style="font-size:12px; margin:5px 0;">${item.name}</div>
                     <button class="inv-sell-one" onclick="sellFromInventory(${index})">Продать: ${item.price}$</button>
                 `;
@@ -332,150 +235,55 @@
             });
         }
 
-        function openGame(caseId) {
-            currentCaseId = caseId;
-            const c = cases[caseId];
-            document.getElementById('current-case-name').innerText = c.name;
-            document.getElementById('current-case-price').innerText = "Цена открытия: " + c.price + " $";
-            
-            // Заполняем ленту фейковыми предметами для красоты
-            initStrip(c);
-            switchScreen('game');
-        }
-
-        // --- ЛОГИКА РУЛЕТКИ ---
-        
-        // Получить случайный предмет из кейса (упрощенная логика весов для примера)
-        function getRandomItemFromCase(c) {
-            // В этом примере просто берем случайный из пула
-            // Для настоящей игры тут нужна математика процентов, но для теста пойдет рандом
-            const randIndex = Math.floor(Math.random() * c.pool.length);
-            return c.pool[randIndex];
-        }
-
-        function createCard(item) {
-            const div = document.createElement('div');
-            div.className = `item r-${item.rarity}`;
-            div.innerHTML = `${item.icon}<span>${item.price}$</span>`;
-            return div;
-        }
-
-        function initStrip(c) {
-            const strip = document.getElementById('strip');
-            strip.innerHTML = '';
-            strip.style.transition = 'none';
-            strip.style.transform = 'translateX(0)';
-            for(let i=0; i<30; i++) {
-                strip.appendChild(createCard(getRandomItemFromCase(c)));
-            }
-        }
-
-        function spin() {
-            const c = cases[currentCaseId];
-            if (balance < c.price) {
-                alert("Не хватает денег!");
-                return;
-            }
-
-            balance -= c.price;
-            updateBalance();
-
-            const btn = document.getElementById('spin-btn');
-            btn.disabled = true;
-
-            // Выбираем победителя
-            // Здесь я добавил шанс: чем дороже кейс, тем круче призы
-            // (В реальности тут сложная формула, я сделал простую выборку)
-            let winner = getRandomItemFromCase(c);
-            // Дадим шанс на крутой дроп в дорогих кейсах
-            if (c.id === 2 && Math.random() > 0.9) winner = itemsDB.god[Math.floor(Math.random()*2)];
-
-            currentWonItem = winner;
-
-            // Генерируем ленту
-            const strip = document.getElementById('strip');
-            strip.innerHTML = '';
-            strip.style.transition = 'none';
-            strip.style.transform = 'translateX(0)';
-
-            const winIndex = 40;
-            const cardWidth = 110;
-
-            for(let i=0; i<winIndex; i++) strip.appendChild(createCard(getRandomItemFromCase(c)));
-            strip.appendChild(createCard(winner));
-            for(let i=0; i<10; i++) strip.appendChild(createCard(getRandomItemFromCase(c)));
-
-            // Задержка перед стартом
-            setTimeout(() => {
-                const offset = (Math.random() * 60) - 30; // Разброс внутри карточки
-                const scrollPos = (winIndex * cardWidth) - (strip.parentElement.offsetWidth / 2) + (cardWidth / 2) + offset;
-
-                strip.style.transition = "transform 4s cubic-bezier(0.15, 0, 0.2, 1)";
-                strip.style.transform = `translateX(-${scrollPos}px)`;
-
-                setTimeout(() => showWinModal(winner), 4000);
-            }, 50);
-        }
-
         function showWinModal(item) {
             if (vkBridge.isWebView()) vkBridge.send("VKWebAppTapticNotificationOccurred", {"type": "success"});
             
-            document.getElementById('win-icon').innerText = item.icon;
+            // Ставим картинку в окно выигрыша
+            document.getElementById('win-img-src').src = item.img;
+            
             document.getElementById('win-name').innerText = item.name;
             document.getElementById('win-price-text').innerText = `Цена: ${item.price} $`;
             document.getElementById('sell-price-btn').innerText = `+ ${item.price} $`;
             
             const ui = document.getElementById('win-card-ui');
             ui.className = `win-card r-${item.rarity}`;
-            
             document.getElementById('win-modal').style.display = 'flex';
         }
 
-        // --- ДЕЙСТВИЯ С ПРИЗОМ ---
-
-        function actionSell() {
-            balance += currentWonItem.price;
-            closeModal();
+        // --- ОСТАЛЬНАЯ ЛОГИКА (Та же самая) ---
+        function switchScreen(n){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active-screen')); document.getElementById('screen-'+n).classList.add('active-screen'); }
+        function showMenu(){ switchScreen('menu'); }
+        function showInventory(){ renderInventory(); switchScreen('inventory'); }
+        function openGame(id){ currentCaseId=id; const c=cases[id]; document.getElementById('current-case-name').innerText=c.name; document.getElementById('current-case-price').innerText="Цена: "+c.price+" $"; initStrip(c); switchScreen('game'); }
+        function getRandomItemFromCase(c){ const rand=Math.floor(Math.random()*c.pool.length); return c.pool[rand]; }
+        function initStrip(c){ const s=document.getElementById('strip'); s.innerHTML=''; s.style.transition='none'; s.style.transform='translateX(0)'; for(let i=0;i<30;i++) s.appendChild(createCard(getRandomItemFromCase(c))); }
+        function spin(){ 
+            const c=cases[currentCaseId]; 
+            if(balance<c.price){ alert("Мало денег!"); return; } 
+            balance-=c.price; updateBalance(); 
+            document.getElementById('spin-btn').disabled=true;
+            let winner=getRandomItemFromCase(c);
+            if(c.id===2 && Math.random()>0.85) winner=itemsDB.god[Math.floor(Math.random()*2)];
+            currentWonItem=winner;
+            const s=document.getElementById('strip'); s.innerHTML=''; s.style.transition='none'; s.style.transform='translateX(0)';
+            for(let i=0;i<40;i++) s.appendChild(createCard(getRandomItemFromCase(c)));
+            s.appendChild(createCard(winner));
+            for(let i=0;i<10;i++) s.appendChild(createCard(getRandomItemFromCase(c)));
+            setTimeout(()=>{
+                const os=(Math.random()*60)-30; 
+                const pos=(40*110)-(s.parentElement.offsetWidth/2)+(110/2)+os;
+                s.style.transition="transform 4s cubic-bezier(0.15,0,0.2,1)";
+                s.style.transform=`translateX(-${pos}px)`;
+                setTimeout(()=>showWinModal(winner),4000);
+            },50);
         }
+        function actionSell(){ balance+=currentWonItem.price; closeModal(); }
+        function actionKeep(){ inventory.push(currentWonItem); closeModal(); }
+        function closeModal(){ document.getElementById('win-modal').style.display='none'; document.getElementById('spin-btn').disabled=false; updateBalance(); initStrip(cases[currentCaseId]); }
+        function sellFromInventory(i){ balance+=inventory[i].price; inventory.splice(i,1); updateBalance(); renderInventory(); }
+        function sellAll(){ if(!inventory.length)return; if(!confirm("Продать всё?"))return; let t=0; inventory.forEach(i=>t+=i.price); balance+=t; inventory=[]; updateBalance(); renderInventory(); }
 
-        function actionKeep() {
-            inventory.push(currentWonItem);
-            closeModal();
-        }
-
-        function closeModal() {
-            document.getElementById('win-modal').style.display = 'none';
-            document.getElementById('spin-btn').disabled = false;
-            updateBalance();
-            initStrip(cases[currentCaseId]); // Сброс
-        }
-
-        // --- УПРАВЛЕНИЕ ИНВЕНТАРЕМ ---
-        function sellFromInventory(index) {
-            const item = inventory[index];
-            balance += item.price;
-            inventory.splice(index, 1); // Удалить из массива
-            updateBalance();
-            renderInventory(); // Перерисовать
-        }
-
-        function sellAll() {
-            if(!inventory.length) return;
-            if(!confirm("Точно продать всё?")) return;
-            
-            let total = 0;
-            inventory.forEach(i => total += i.price);
-            balance += total;
-            inventory = [];
-            
-            updateBalance();
-            renderInventory();
-        }
-
-        // Старт
-        renderCases();
-        updateBalance();
-
+        renderCases(); updateBalance();
     </script>
 </body>
-    </html>
+                    </html>
