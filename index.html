@@ -120,27 +120,21 @@
         }
         .spin-button-main:disabled { filter: grayscale(1); opacity: 0.5; }
 
-        /* --- MODALS (WIN & ERROR) --- */
+        /* --- MODALS (WIN & ERROR & CONFIRM) --- */
         .modal-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index: 4000; align-items:center; justify-content:center; flex-direction:column; }
         
-        /* Карточка приза */
-        .prize-card {
-            background: #222; padding: 30px; border-radius: 20px; text-align: center; width: 280px;
-            border: 2px solid #444; box-shadow: 0 0 50px rgba(255,255,255,0.1);
+        .prize-card, .error-card, .confirm-card {
+            background: #18181b; padding: 25px; border-radius: 15px; text-align: center; width: 280px;
+            border: 2px solid #333; box-shadow: 0 0 50px rgba(0,0,0,0.5);
             animation: popIn 0.3s ease;
         }
-        
-        /* Карточка ОШИБКИ */
-        .error-card {
-            background: #18181b; padding: 25px; border-radius: 15px; text-align: center; width: 260px;
-            border: 2px solid var(--danger); box-shadow: 0 0 30px rgba(214, 48, 49, 0.2);
-            animation: shake 0.4s ease-in-out;
-        }
+        .error-card { border-color: var(--danger); }
+        .confirm-card { border-color: var(--primary); }
+
         .error-icon { font-size: 50px; color: var(--danger); margin-bottom: 15px; }
         .error-btn { background: var(--danger); color: white; border: none; padding: 10px 30px; border-radius: 20px; font-weight: bold; margin-top: 15px; cursor: pointer; }
 
-        @keyframes popIn { from {transform: scale(0);} to {transform: scale(1);} }
-        @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-5px);} 75% {transform: translateX(5px);} }
+        @keyframes popIn { from {transform: scale(0.8); opacity:0;} to {transform: scale(1); opacity:1;} }
 
         .prize-img { width: 130px; height: 130px; object-fit: contain; margin-bottom: 15px; }
         .action-btns { display: flex; gap: 10px; margin-top: 20px; }
@@ -221,13 +215,25 @@
         </div>
     </div>
 
-    <!-- ERROR MODAL (НОВОЕ ОКНО) -->
+    <!-- ERROR MODAL -->
     <div id="error-modal" class="modal-overlay">
         <div class="error-card">
             <div class="error-icon"><i class="fa-solid fa-circle-exclamation"></i></div>
             <h3 style="margin:0">Не хватает денег!</h3>
-            <p style="color:#888; font-size:14px;">Поработай кликером или продай что-то.</p>
+            <p style="color:#888; font-size:14px;">Поработай кликером.</p>
             <button class="error-btn" onclick="closeError()">ПОНЯТНО</button>
+        </div>
+    </div>
+
+    <!-- CONFIRM MODAL (НОВОЕ ОКНО) -->
+    <div id="confirm-modal" class="modal-overlay">
+        <div class="confirm-card">
+            <h3 style="margin-bottom:10px;">Продать весь склад?</h3>
+            <p style="color:#888; font-size:13px; margin-top:0">Отменить это действие нельзя.</p>
+            <div class="action-btns">
+                <button class="act-btn" style="background: #333;" onclick="closeConfirm()">Нет</button>
+                <button class="act-btn" style="background: var(--danger);" id="confirm-yes-btn">Да, продать</button>
+            </div>
         </div>
     </div>
 
@@ -289,15 +295,16 @@
             if(name==='inv') renderInv();
         }
 
-        // --- CUSTOM ALERT ---
+        // --- CUSTOM ALERTS ---
         function showError() {
             if(vkBridge.isWebView()) vkBridge.send("VKWebAppTapticNotificationOccurred", {"type":"error"});
             document.getElementById('error-modal').style.display = 'flex';
         }
-        function closeError() {
-            document.getElementById('error-modal').style.display = 'none';
-        }
+        function closeError() { document.getElementById('error-modal').style.display = 'none'; }
 
+        // --- CUSTOM CONFIRM ---
+        function closeConfirm() { document.getElementById('confirm-modal').style.display = 'none'; }
+        
         function doWork(e) {
             balance += 25; updateUI(); save();
             if(vkBridge.isWebView()) vkBridge.send("VKWebAppTapticImpactOccurred", {"style":"light"});
@@ -331,11 +338,8 @@
         }
         function buyBiz(i) {
             let price = Math.floor(bizList[i].p * Math.pow(1.15, myBiz[i]));
-            if(balance >= price) { 
-                balance-=price; myBiz[i]++; calcIncome(); updateUI(); save(); 
-            } else {
-                showError();
-            }
+            if(balance >= price) { balance-=price; myBiz[i]++; calcIncome(); updateUI(); save(); }
+            else { showError(); }
         }
 
         let currCase = null; let wonItem = null;
@@ -409,15 +413,24 @@
             });
         }
         function sellOne(i) { balance+=inventory[i].p; inventory.splice(i,1); updateUI(); save(); renderInv(); }
+        
         function sellAll() { 
             if(!inventory.length) return;
-            if(confirm("Продать всё?")) {
+            // ПОКАЗЫВАЕМ НАШЕ КРАСИВОЕ ОКНО
+            let modal = document.getElementById('confirm-modal');
+            let btn = document.getElementById('confirm-yes-btn');
+            
+            // Настраиваем кнопку "Да"
+            btn.onclick = function() {
                 let sum=0; inventory.forEach(x=>sum+=x.p); balance+=sum; inventory=[];
                 updateUI(); save(); renderInv();
-            }
+                modal.style.display = 'none';
+            };
+            
+            modal.style.display = 'flex';
         }
 
         load(); renderCases();
     </script>
 </body>
-    </html>
+            </html>
