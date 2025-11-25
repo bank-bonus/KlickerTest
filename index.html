@@ -53,26 +53,17 @@
         .active-screen { display: flex; animation: fadeEffect 0.3s; }
         @keyframes fadeEffect { from {opacity: 0; transform: translateY(10px);} to {opacity: 1; transform: translateY(0);} }
 
-        /* --- CLICKER (SMALL BUTTON) --- */
-        .clicker-container { 
-            text-align: center; 
-            margin: 20px 0 10px 0; 
-        }
+        /* --- CLICKER --- */
+        .clicker-container { text-align: center; margin: 20px 0 10px 0; }
         .work-btn {
             background: linear-gradient(90deg, #ff7675, #d63031);
-            border: none;
-            border-radius: 30px; /* Закругленная */
-            padding: 8px 25px;   /* Компактный размер */
-            color: white;
-            font-size: 14px;     /* Шрифт меньше */
-            font-weight: 800;
+            border: none; border-radius: 30px; padding: 8px 25px;
+            color: white; font-size: 14px; font-weight: 800;
             box-shadow: 0 3px 10px rgba(214, 48, 49, 0.4);
-            cursor: pointer;
-            transition: transform 0.1s;
+            cursor: pointer; transition: transform 0.1s;
             display: inline-flex; align-items: center; gap: 8px;
         }
         .work-btn:active { transform: scale(0.95); }
-        
         .float-text { position: absolute; color: var(--success); font-weight: 900; font-size: 20px; pointer-events: none; z-index: 9999; animation: floatUp 0.8s ease-out forwards; text-shadow: 0 2px 5px black;}
         @keyframes floatUp { 0% {transform: translateY(0) scale(1); opacity: 1;} 100% {transform: translateY(-80px) scale(1.5); opacity: 0;} }
 
@@ -80,14 +71,7 @@
         .section-title { padding: 0 15px 10px; font-size: 12px; color: #888; text-transform: uppercase; font-weight: bold; margin-top: 10px; }
         .case-list { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 15px; }
         .case-card {
-            background: var(--surface);
-            border: 1px solid #333;
-            border-radius: 15px;
-            padding: 15px;
-            text-align: center;
-            position: relative;
-            transition: 0.2s;
-            overflow: hidden;
+            background: var(--surface); border: 1px solid #333; border-radius: 15px; padding: 15px; text-align: center; position: relative; transition: 0.2s; overflow: hidden;
         }
         .case-card:active { transform: scale(0.95); background: #222; }
         .case-img-icon { width: 80px; height: 80px; object-fit: contain; margin: 10px 0; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.3)); }
@@ -116,7 +100,6 @@
             flex-direction: column; align-items: center; justify-content: center;
         }
         .close-btn { position: absolute; top: 20px; right: 20px; background: #333; color: white; border: none; width: 40px; height: 40px; border-radius: 50%; font-size: 20px; cursor: pointer; }
-        
         .roulette-wrapper {
             width: 100%; height: 140px; background: #000; margin: 30px 0;
             border-top: 2px solid var(--primary); border-bottom: 2px solid var(--primary);
@@ -137,14 +120,28 @@
         }
         .spin-button-main:disabled { filter: grayscale(1); opacity: 0.5; }
 
-        /* --- WIN MODAL --- */
-        #win-modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index: 3000; align-items:center; justify-content:center; flex-direction:column; }
+        /* --- MODALS (WIN & ERROR) --- */
+        .modal-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index: 4000; align-items:center; justify-content:center; flex-direction:column; }
+        
+        /* Карточка приза */
         .prize-card {
             background: #222; padding: 30px; border-radius: 20px; text-align: center; width: 280px;
             border: 2px solid #444; box-shadow: 0 0 50px rgba(255,255,255,0.1);
-            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: popIn 0.3s ease;
         }
+        
+        /* Карточка ОШИБКИ */
+        .error-card {
+            background: #18181b; padding: 25px; border-radius: 15px; text-align: center; width: 260px;
+            border: 2px solid var(--danger); box-shadow: 0 0 30px rgba(214, 48, 49, 0.2);
+            animation: shake 0.4s ease-in-out;
+        }
+        .error-icon { font-size: 50px; color: var(--danger); margin-bottom: 15px; }
+        .error-btn { background: var(--danger); color: white; border: none; padding: 10px 30px; border-radius: 20px; font-weight: bold; margin-top: 15px; cursor: pointer; }
+
         @keyframes popIn { from {transform: scale(0);} to {transform: scale(1);} }
+        @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-5px);} 75% {transform: translateX(5px);} }
+
         .prize-img { width: 130px; height: 130px; object-fit: contain; margin-bottom: 15px; }
         .action-btns { display: flex; gap: 10px; margin-top: 20px; }
         .act-btn { flex: 1; padding: 15px; border: none; border-radius: 10px; color: white; font-weight: bold; font-size: 14px; cursor: pointer; }
@@ -172,14 +169,11 @@
 
     <!-- MAIN SCREEN -->
     <div id="screen-home" class="screen active-screen">
-        
-        <!-- КНОПКА КЛИК (МАЛЕНЬКАЯ) -->
         <div class="clicker-container">
             <button class="work-btn" onclick="doWork(event)">
                 <i class="fa-solid fa-hand-pointer"></i> Клик (+25$)
             </button>
         </div>
-
         <div class="section-title"><i class="fa-solid fa-box-open"></i> Доступные кейсы</div>
         <div class="case-list" id="case-list"></div>
     </div>
@@ -205,29 +199,35 @@
     <!-- GAME WINDOW -->
     <div id="game-overlay">
         <button class="close-btn" onclick="closeGame()"><i class="fa-solid fa-xmark"></i></button>
-        
         <h2 id="game-title" style="margin-bottom: 5px; font-size: 28px;">Кейс</h2>
         <div id="game-price" style="color:#888; margin-bottom: 20px;">0 $</div>
-
         <div class="roulette-wrapper">
             <div class="pointer"></div>
             <div class="tape" id="tape"></div>
         </div>
-
         <button class="spin-button-main" id="spin-btn" onclick="spin()">КРУТИТЬ</button>
     </div>
 
     <!-- WIN MODAL -->
-    <div id="win-modal">
+    <div id="win-modal" class="modal-overlay">
         <div class="prize-card" id="prize-card">
             <img src="" class="prize-img" id="prize-img">
             <h2 id="prize-name" style="margin: 0; font-size: 20px;">Item</h2>
             <p id="prize-price" style="color: var(--success); font-weight: bold; margin: 5px 0 0;">100 $</p>
-            
             <div class="action-btns">
                 <button class="act-btn" style="background: #2d3436; border: 1px solid #555;" onclick="takeItem()">В СКЛАД</button>
                 <button class="act-btn" style="background: var(--success);" onclick="sellItem()">ПРОДАТЬ</button>
             </div>
+        </div>
+    </div>
+
+    <!-- ERROR MODAL (НОВОЕ ОКНО) -->
+    <div id="error-modal" class="modal-overlay">
+        <div class="error-card">
+            <div class="error-icon"><i class="fa-solid fa-circle-exclamation"></i></div>
+            <h3 style="margin:0">Не хватает денег!</h3>
+            <p style="color:#888; font-size:14px;">Поработай кликером или продай что-то.</p>
+            <button class="error-btn" onclick="closeError()">ПОНЯТНО</button>
         </div>
     </div>
 
@@ -255,7 +255,6 @@
             god: [ {n:"Яхта", p:500000, r:6, i:"yacht.png"}, {n:"Самолет", p:2000000, r:6, i:"plane.png"} ]
         };
 
-        // ВЕРНУЛ НАЗВАНИЯ "БОМЖ", "МАЖОР", "ОЛИГАРХ"
         const cases = [
             { id:0, n:"Бомж Бокс", p:100, i:"case_1.png", pool:[...items.trash, ...items.common], w:[70,30] },
             { id:1, n:"Мажор Бокс", p:1000, i:"case_2.png", pool:[...items.common, ...items.rare, ...items.epic], w:[50,40,10] },
@@ -288,6 +287,15 @@
             document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             if(name==='inv') renderInv();
+        }
+
+        // --- CUSTOM ALERT ---
+        function showError() {
+            if(vkBridge.isWebView()) vkBridge.send("VKWebAppTapticNotificationOccurred", {"type":"error"});
+            document.getElementById('error-modal').style.display = 'flex';
+        }
+        function closeError() {
+            document.getElementById('error-modal').style.display = 'none';
         }
 
         function doWork(e) {
@@ -323,7 +331,11 @@
         }
         function buyBiz(i) {
             let price = Math.floor(bizList[i].p * Math.pow(1.15, myBiz[i]));
-            if(balance >= price) { balance-=price; myBiz[i]++; calcIncome(); updateUI(); save(); }
+            if(balance >= price) { 
+                balance-=price; myBiz[i]++; calcIncome(); updateUI(); save(); 
+            } else {
+                showError();
+            }
         }
 
         let currCase = null; let wonItem = null;
@@ -347,7 +359,7 @@
         }
 
         function spin() {
-            if(balance < currCase.p) { alert("Не хватает денег!"); return; }
+            if(balance < currCase.p) { showError(); return; }
             balance -= currCase.p; updateUI(); save();
             let btn = document.getElementById('spin-btn'); btn.disabled = true; btn.innerText = "КРУТИМ...";
             
