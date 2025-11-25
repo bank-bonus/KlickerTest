@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Case Simulator Images</title>
+    <title>Case Simulator ВК</title>
     <style>
         :root {
             --bg-color: #1b1b1b;
@@ -24,32 +24,28 @@
             user-select: none;
         }
 
-        /* --- Стили для картинок --- */
+        /* Картинки */
         .item-image {
-            width: 60px;
-            height: 60px;
-            object-fit: contain; /* Чтобы картинка не растягивалась */
-            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5)); /* Тень под предметом */
+            width: 70px;
+            height: 70px;
+            object-fit: contain;
+            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5));
         }
-        
-        /* Большая картинка в окне выигрыша */
         .win-img-big {
-            width: 120px;
-            height: 120px;
+            width: 140px;
+            height: 140px;
             object-fit: contain;
             margin-bottom: 15px;
-            filter: drop-shadow(0 0 15px rgba(255,255,255,0.2));
+            filter: drop-shadow(0 0 20px rgba(255,255,255,0.1));
         }
-
-        /* Иконка кейса в меню */
         .case-img-icon {
-            width: 80px;
-            height: 80px;
+            width: 90px;
+            height: 90px;
             object-fit: contain;
             margin-bottom: 10px;
         }
 
-        /* Остальные стили */
+        /* Интерфейс */
         .header { padding: 15px; background: #222; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.5); z-index: 20; }
         .balance-box { font-size: 18px; font-weight: bold; color: var(--green); }
         .inv-btn { background: #333; border: 1px solid #555; color: white; padding: 8px 15px; border-radius: 8px; font-size: 14px; cursor: pointer; }
@@ -133,7 +129,6 @@
     <!-- ОКНО ВЫИГРЫША -->
     <div id="win-modal">
         <div class="win-card" id="win-card-ui">
-            <!-- Сюда вставится картинка -->
             <img src="" id="win-img-src" class="win-img-big">
             <h3 id="win-name">Предмет</h3>
             <p style="color: #aaa;" id="win-price-text">Стоимость: 0 $</p>
@@ -153,45 +148,41 @@
         let currentCaseId = null;
         let currentWonItem = null;
 
-        // --- ВАЖНО: ССЫЛКИ НА КАРТИНКИ ---
-        // Если ты загрузил картинки на GitHub в ту же папку, пиши просто имя файла: 'iphone.png'
-        // Я пока поставил ссылки из интернета для примера.
-        
+        // --- БАЗА ДАННЫХ С ТВОИМИ КАРТИНКАМИ ---
         const itemsDB = {
             garbage: [
-                { name: "Стикер", img: "https://cdn-icons-png.flaticon.com/512/4525/4525026.png", price: 10, rarity: 1 },
-                { name: "Носок", img: "https://cdn-icons-png.flaticon.com/512/2310/2310237.png", price: 50, rarity: 1 },
+                { name: "Стикер", img: "sticker.png", price: 10, rarity: 1 },
+                { name: "Носок", img: "sock.png", price: 50, rarity: 1 },
             ],
             low: [
-                { name: "Наушники", img: "https://cdn-icons-png.flaticon.com/512/5906/5906124.png", price: 200, rarity: 2 },
-                { name: "Клавиатура", img: "https://cdn-icons-png.flaticon.com/512/9839/9839446.png", price: 400, rarity: 2 },
+                { name: "Наушники", img: "headphones.png", price: 200, rarity: 2 },
+                { name: "Клавиатура", img: "keyboard.png", price: 400, rarity: 2 },
             ],
             mid: [
-                { name: "iPhone 13", img: "https://cdn-icons-png.flaticon.com/512/644/644458.png", price: 1200, rarity: 3 },
-                { name: "PlayStation 5", img: "https://cdn-icons-png.flaticon.com/512/5906/5906062.png", price: 800, rarity: 3 },
+                { name: "iPhone 15", img: "iphone.png", price: 1200, rarity: 3 },
+                { name: "PlayStation 5", img: "ps5.png", price: 800, rarity: 3 },
             ],
             high: [
-                { name: "MacBook", img: "https://cdn-icons-png.flaticon.com/512/2000/2000282.png", price: 3000, rarity: 4 },
-                { name: "Игровой ПК", img: "https://cdn-icons-png.flaticon.com/512/1792/1792525.png", price: 5000, rarity: 4 },
+                { name: "MacBook", img: "macbook.png", price: 3000, rarity: 4 },
+                { name: "Игровой ПК", img: "pc.png", price: 5000, rarity: 4 },
             ],
             super: [
-                { name: "Tesla Model S", img: "https://cdn-icons-png.flaticon.com/512/3202/3202926.png", price: 50000, rarity: 5 },
-                { name: "Вилла", img: "https://cdn-icons-png.flaticon.com/512/2412/2412695.png", price: 150000, rarity: 5 },
+                { name: "Tesla Model S", img: "tesla.png", price: 50000, rarity: 5 },
+                { name: "Вилла", img: "house.png", price: 150000, rarity: 5 },
             ],
             god: [
-                { name: "Яхта", img: "https://cdn-icons-png.flaticon.com/512/2942/2942080.png", price: 500000, rarity: 6 },
-                { name: "Самолет", img: "https://cdn-icons-png.flaticon.com/512/2204/2204344.png", price: 2000000, rarity: 6 },
+                { name: "Яхта", img: "yacht.png", price: 500000, rarity: 6 },
+                { name: "Самолет", img: "plane.png", price: 2000000, rarity: 6 },
             ]
         };
 
         const cases = [
-            { id: 0, name: "Бомж Бокс", price: 100, img: "https://cdn-icons-png.flaticon.com/512/679/679720.png", pool: [...itemsDB.garbage, ...itemsDB.low], weights: [70, 30] },
-            { id: 1, name: "Мажор Бокс", price: 1000, img: "https://cdn-icons-png.flaticon.com/512/2983/2983870.png", pool: [...itemsDB.low, ...itemsDB.mid, ...itemsDB.high], weights: [50, 40, 10] },
-            { id: 2, name: "Олигарх Бокс", price: 10000, img: "https://cdn-icons-png.flaticon.com/512/2721/2721115.png", pool: [...itemsDB.mid, ...itemsDB.high, ...itemsDB.super, ...itemsDB.god], weights: [50, 30, 15, 5] }
+            { id: 0, name: "Бомж Бокс", price: 100, img: "case_1.png", pool: [...itemsDB.garbage, ...itemsDB.low], weights: [70, 30] },
+            { id: 1, name: "Мажор Бокс", price: 1000, img: "case_2.png", pool: [...itemsDB.low, ...itemsDB.mid, ...itemsDB.high], weights: [50, 40, 10] },
+            { id: 2, name: "Олигарх Бокс", price: 10000, img: "case_3.png", pool: [...itemsDB.mid, ...itemsDB.high, ...itemsDB.super, ...itemsDB.god], weights: [50, 30, 15, 5] }
         ];
 
-        // --- ЛОГИКА ОТОБРАЖЕНИЯ (Теперь с <img>) ---
-
+        // --- ЛОГИКА ---
         function updateBalance() { document.getElementById('balance').innerText = balance + " $"; }
 
         function renderCases() {
@@ -201,9 +192,8 @@
                 const div = document.createElement('div');
                 div.className = 'case-card';
                 div.onclick = () => openGame(c.id);
-                // Тут мы вставляем картинку кейса
                 div.innerHTML = `
-                    <img src="${c.img}" class="case-img-icon">
+                    <img src="${c.img}" class="case-img-icon" onerror="this.src='https://cdn-icons-png.flaticon.com/512/679/679720.png'">
                     <div class="case-name">${c.name}</div>
                     <div class="case-price">${c.price} $</div>
                 `;
@@ -214,8 +204,8 @@
         function createCard(item) {
             const div = document.createElement('div');
             div.className = `item r-${item.rarity}`;
-            // Тут мы вставляем картинку предмета
-            div.innerHTML = `<img src="${item.img}" class="item-image"><span>${item.price}$</span>`;
+            // onerror нужен, чтобы если ты забыл картинку, не было пустого места
+            div.innerHTML = `<img src="${item.img}" class="item-image" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3524/3524335.png'"><span>${item.price}$</span>`;
             return div;
         }
 
@@ -227,7 +217,7 @@
                 const div = document.createElement('div');
                 div.className = `inv-item r-${item.rarity}`;
                 div.innerHTML = `
-                    <img src="${item.img}" class="item-image">
+                    <img src="${item.img}" class="item-image" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3524/3524335.png'">
                     <div style="font-size:12px; margin:5px 0;">${item.name}</div>
                     <button class="inv-sell-one" onclick="sellFromInventory(${index})">Продать: ${item.price}$</button>
                 `;
@@ -237,26 +227,22 @@
 
         function showWinModal(item) {
             if (vkBridge.isWebView()) vkBridge.send("VKWebAppTapticNotificationOccurred", {"type": "success"});
-            
-            // Ставим картинку в окно выигрыша
             document.getElementById('win-img-src').src = item.img;
-            
             document.getElementById('win-name').innerText = item.name;
             document.getElementById('win-price-text').innerText = `Цена: ${item.price} $`;
             document.getElementById('sell-price-btn').innerText = `+ ${item.price} $`;
-            
             const ui = document.getElementById('win-card-ui');
             ui.className = `win-card r-${item.rarity}`;
             document.getElementById('win-modal').style.display = 'flex';
         }
 
-        // --- ОСТАЛЬНАЯ ЛОГИКА (Та же самая) ---
         function switchScreen(n){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active-screen')); document.getElementById('screen-'+n).classList.add('active-screen'); }
         function showMenu(){ switchScreen('menu'); }
         function showInventory(){ renderInventory(); switchScreen('inventory'); }
         function openGame(id){ currentCaseId=id; const c=cases[id]; document.getElementById('current-case-name').innerText=c.name; document.getElementById('current-case-price').innerText="Цена: "+c.price+" $"; initStrip(c); switchScreen('game'); }
         function getRandomItemFromCase(c){ const rand=Math.floor(Math.random()*c.pool.length); return c.pool[rand]; }
         function initStrip(c){ const s=document.getElementById('strip'); s.innerHTML=''; s.style.transition='none'; s.style.transform='translateX(0)'; for(let i=0;i<30;i++) s.appendChild(createCard(getRandomItemFromCase(c))); }
+        
         function spin(){ 
             const c=cases[currentCaseId]; 
             if(balance<c.price){ alert("Мало денег!"); return; } 
@@ -286,4 +272,4 @@
         renderCases(); updateBalance();
     </script>
 </body>
-                    </html>
+                </html>
