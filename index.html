@@ -61,11 +61,13 @@
         }
         .ad-btn {
             background: linear-gradient(45deg, #fdcb6e, #e17055);
-            border: none; padding: 8px 20px; border-radius: 20px;
+            border: none; padding: 10px 25px; border-radius: 20px;
             color: #fff; font-weight: bold; font-size: 13px;
             cursor: pointer; box-shadow: 0 0 15px rgba(225, 112, 85, 0.4);
             animation: pulse 2s infinite;
+            display: inline-block;
         }
+        .ad-btn:active { transform: scale(0.95); }
         @keyframes pulse { 0% {transform: scale(1);} 50% {transform: scale(1.05);} 100% {transform: scale(1);} }
 
         /* --- SCREENS --- */
@@ -195,7 +197,8 @@
 
     <!-- AD BOOST BUTTON -->
     <div class="ad-boost-container">
-        <button class="ad-btn" onclick="watchAdBoost()">
+        <!-- Явно указал тип button -->
+        <button type="button" class="ad-btn" id="ad-btn-element" onclick="watchAdBoost()">
             <i class="fa-solid fa-play"></i> BOOST x2 (РЕКЛАМА)
         </button>
         <div id="boost-timer" style="font-size:10px; color:#fdcb6e; margin-top:5px; display:none;">Осталось: 0с</div>
@@ -205,7 +208,7 @@
     <div id="screen-home" class="screen active-screen">
         <div class="clicker-container">
             <button class="work-btn" onclick="doWork(event)">
-                <i class="fa-solid fa-hand-pointer"></i> КЛИК (+25$)
+                <i class="fa-solid fa-hand-pointer"></i> КЛИК (+1$)
             </button>
         </div>
         <div class="section-title"><i class="fa-solid fa-box-open"></i> Магазин Кейсов</div>
@@ -300,7 +303,7 @@
         // --- DATA ---
         let balance = 0;
         let inventory = [];
-        let myBiz = [0,0,0,0,0,0,0,0]; // Increased for new businesses
+        let myBiz = [0,0,0,0,0,0,0,0]; 
         let income = 0;
         
         let level = 1;
@@ -309,56 +312,56 @@
 
         let boostEndTime = 0; // Timestamp for ad boost
 
-        // ITEMS
+        // ITEMS (ЦЕНЫ УМЕНЬШЕНЫ)
         const items = {
-            trash: [ {n:"Стикер", p:10, r:1, i:"sticker.png"}, {n:"Брелок", p:50, r:1, i:"sock.png"} ],
-            common: [ {n:"Наушники", p:200, r:2, i:"headphones.png"}, {n:"Клавиатура", p:400, r:2, i:"keyboard.png"} ],
-            rare: [ {n:"iPhone 15", p:1200, r:3, i:"iphone.png"}, {n:"PS5", p:800, r:3, i:"ps5.png"} ],
-            epic: [ {n:"MacBook", p:3000, r:4, i:"macbook.png"}, {n:"PC", p:5000, r:4, i:"pc.png"} ],
-            leg: [ {n:"Tesla", p:50000, r:5, i:"tesla.png"}, {n:"Вилла", p:150000, r:5, i:"house.png"} ],
-            god: [ {n:"Яхта", p:500000, r:6, i:"yacht.png"}, {n:"Самолет", p:2000000, r:6, i:"plane.png"} ],
-            mythic: [ {n:"Биткоин", p:10000000, r:6, i:"bitcoin.png"}, {n:"Серверная", p:25000000, r:6, i:"server.png"} ],
-            cosmic: [ {n:"МКС", p:100000000, r:7, i:"iss.png"}, {n:"База на Луне", p:500000000, r:7, i:"moonbase.png"} ]
+            trash: [ {n:"Стикер", p:2, r:1, i:"sticker.png"}, {n:"Брелок", p:5, r:1, i:"sock.png"} ],
+            common: [ {n:"Наушники", p:20, r:2, i:"headphones.png"}, {n:"Клавиатура", p:40, r:2, i:"keyboard.png"} ],
+            rare: [ {n:"iPhone 15", p:120, r:3, i:"iphone.png"}, {n:"PS5", p:80, r:3, i:"ps5.png"} ],
+            epic: [ {n:"MacBook", p:300, r:4, i:"macbook.png"}, {n:"PC", p:500, r:4, i:"pc.png"} ],
+            leg: [ {n:"Tesla", p:5000, r:5, i:"tesla.png"}, {n:"Вилла", p:15000, r:5, i:"house.png"} ],
+            god: [ {n:"Яхта", p:50000, r:6, i:"yacht.png"}, {n:"Самолет", p:200000, r:6, i:"plane.png"} ],
+            mythic: [ {n:"Биткоин", p:100000, r:6, i:"bitcoin.png"}, {n:"Серверная", p:250000, r:6, i:"server.png"} ],
+            cosmic: [ {n:"МКС", p:500000, r:7, i:"iss.png"}, {n:"База на Луне", p:1000000, r:7, i:"moonbase.png"} ]
         };
 
-        // CASES (Added 2 new ones)
+        // CASES (ЦЕНЫ УМЕНЬШЕНЫ)
         const cases = [
-            { id:0, n:"Бомж Бокс", p:100, i:"case_1.png", pool:[...items.trash, ...items.common], w:[70,30], xp: 10 },
-            { id:1, n:"Мажор Бокс", p:1000, i:"case_2.png", pool:[...items.common, ...items.rare, ...items.epic], w:[50,40,10], xp: 50 },
-            { id:2, n:"Олигарх Бокс", p:10000, i:"case_3.png", pool:[...items.rare, ...items.epic, ...items.leg, ...items.god], w:[50,30,15,5], xp: 150 },
-            { id:3, n:"Хакер Бокс", p:500000, i:"case_4.png", pool:[...items.leg, ...items.god, ...items.mythic], w:[40,40,20], xp: 1000 },
-            { id:4, n:"Космо Бокс", p:50000000, i:"case_5.png", pool:[...items.god, ...items.mythic, ...items.cosmic], w:[40,40,20], xp: 5000 }
+            { id:0, n:"Бомж Бокс", p:10, i:"case_1.png", pool:[...items.trash, ...items.common], w:[70,30], xp: 5 },
+            { id:1, n:"Мажор Бокс", p:100, i:"case_2.png", pool:[...items.common, ...items.rare, ...items.epic], w:[50,40,10], xp: 20 },
+            { id:2, n:"Олигарх Бокс", p:1000, i:"case_3.png", pool:[...items.rare, ...items.epic, ...items.leg, ...items.god], w:[50,30,15,5], xp: 50 },
+            { id:3, n:"Хакер Бокс", p:50000, i:"case_4.png", pool:[...items.leg, ...items.god, ...items.mythic], w:[40,40,20], xp: 200 },
+            { id:4, n:"Космо Бокс", p:250000, i:"case_5.png", pool:[...items.god, ...items.mythic, ...items.cosmic], w:[40,40,20], xp: 1000 }
         ];
 
-        // BUSINESS (Added levels required)
+        // BUSINESS (ЦЕНЫ И ДОХОД УМЕНЬШЕНЫ)
         const bizList = [
-            { n:"Ларек", p:500, inc:5, ico:"fa-lemon", reqLvl: 1 },
-            { n:"Такси", p:2500, inc:35, ico:"fa-taxi", reqLvl: 2 },
-            { n:"Кафе", p:12000, inc:150, ico:"fa-mug-hot", reqLvl: 3 },
-            { n:"Крипто-Ферма", p:50000, inc:600, ico:"fa-server", reqLvl: 5 }, // NEW
-            { n:"Завод", p:200000, inc:1500, ico:"fa-industry", reqLvl: 7 },
-            { n:"Банк", p:1500000, inc:10000, ico:"fa-building-columns", reqLvl: 10 },
-            { n:"Нефтевышка", p:10000000, inc:50000, ico:"fa-oil-well", reqLvl: 15 }, // NEW
-            { n:"Ракета", p:1000000000, inc:1000000, ico:"fa-rocket", reqLvl: 25 }
+            { n:"Ларек", p:50, inc:1, ico:"fa-lemon", reqLvl: 1 },
+            { n:"Такси", p:250, inc:5, ico:"fa-taxi", reqLvl: 2 },
+            { n:"Кафе", p:1200, inc:20, ico:"fa-mug-hot", reqLvl: 3 },
+            { n:"Крипто-Ферма", p:5000, inc:70, ico:"fa-server", reqLvl: 5 },
+            { n:"Завод", p:20000, inc:300, ico:"fa-industry", reqLvl: 7 },
+            { n:"Банк", p:150000, inc:2000, ico:"fa-building-columns", reqLvl: 10 },
+            { n:"Нефтевышка", p:1000000, inc:10000, ico:"fa-oil-well", reqLvl: 15 },
+            { n:"Ракета", p:50000000, inc:150000, ico:"fa-rocket", reqLvl: 25 }
         ];
 
         // --- CORE FUNCTIONS ---
         function load() {
             try {
-                let d = JSON.parse(localStorage.getItem('v6_save'));
+                let d = JSON.parse(localStorage.getItem('v6_save_lite')); // Новое имя сохранения для сброса старых денег
                 if(d) { 
                     balance=d.b; inventory=d.i; myBiz=d.z || [0,0,0,0,0,0,0,0]; 
                     level=d.l || 1; xp=d.x || 0; 
                     boostEndTime=d.bt || 0;
-                } else { balance=500; }
-            } catch(e) { balance=500; }
+                } else { balance=20; } // Старт с 20$
+            } catch(e) { balance=20; }
             calcXpNeeded();
             calcIncome(); 
             updateUI();
         }
 
         function save() { 
-            localStorage.setItem('v6_save', JSON.stringify({
+            localStorage.setItem('v6_save_lite', JSON.stringify({
                 b:balance, i:inventory, z:myBiz, l:level, x:xp, bt:boostEndTime
             })); 
         }
@@ -427,37 +430,47 @@
             if(name==='home') renderCases();
         }
 
-        // --- ADVERTISING ---
+        // --- ADVERTISING (ИСПРАВЛЕНО) ---
         function watchAdBoost() {
-            // VK Ad Integration
-            if(vkBridge.isWebView()) {
+            // Проверка: мы ВКонтакте или просто в браузере?
+            const isVK = typeof vkBridge !== 'undefined' && vkBridge.isWebView();
+            
+            if(isVK) {
+                 // Реальная реклама ВК
                  vkBridge.send("VKWebAppShowRewardedVideo")
                 .then(data => {
                     if (data.result) {
-                        // User watched ad
-                        boostEndTime = Date.now() + (180 * 1000); // 3 minutes
-                        calcIncome();
-                        save();
+                        activateBoost();
                     }
                 })
-                .catch(error => console.log(error));
+                .catch(error => {
+                    console.log(error);
+                    // Если реклама не загрузилась, можно дать бонус как утешение (опционально)
+                    // Или просто вывести алерт
+                    alert("Реклама не загрузилась. Попробуйте позже.");
+                });
             } else {
-                // Testing mode for browser
-                boostEndTime = Date.now() + (180 * 1000);
-                alert("Реклама просмотрена (Тест). Доход x2 на 3 минуты!");
-                calcIncome();
+                // ТЕСТОВЫЙ РЕЖИМ (ДЛЯ БРАУЗЕРА ПК)
+                alert("Это тестовая реклама (так как вы не в ВК). Буст активирован!");
+                activateBoost();
             }
+        }
+
+        function activateBoost() {
+            boostEndTime = Date.now() + (180 * 1000); // 3 minutes
+            calcIncome();
+            save();
         }
 
         // --- ACTIONS ---
         function doWork(e) {
-            balance += 25; 
-            addXp(1); // Click XP
+            balance += 1; // Уменьшено
+            addXp(1); 
             updateUI(); save();
             
             if(vkBridge.isWebView()) vkBridge.send("VKWebAppTapticImpactOccurred", {"style":"light"});
             
-            let float = document.createElement('div'); float.className = 'float-text'; float.innerText = "+25 $";
+            let float = document.createElement('div'); float.className = 'float-text'; float.innerText = "+1 $";
             let x = e.clientX || e.target.getBoundingClientRect().left + 50;
             let y = e.clientY || e.target.getBoundingClientRect().top;
             float.style.left = x + 'px'; float.style.top = y + 'px';
@@ -547,8 +560,7 @@
             let btn = document.getElementById('spin-btn'); btn.disabled = true; btn.innerText = "КРУТИМ...";
             
             let winner = getRandom(currCase.pool);
-            // Luck modification for high tier
-            if(currCase.id >= 2 && Math.random() > 0.95) winner = currCase.pool[currCase.pool.length - 1]; // Small chance for best item
+            if(currCase.id >= 2 && Math.random() > 0.95) winner = currCase.pool[currCase.pool.length - 1]; 
             
             wonItem = winner;
 
@@ -613,4 +625,4 @@
         load(); renderCases();
     </script>
 </body>
-                </html>
+        </html>
