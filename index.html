@@ -34,6 +34,39 @@
             -webkit-tap-highlight-color: transparent;
         }
 
+        /* --- LOADING SCREEN --- */
+        #loading-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #09090b; z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.5s ease;
+        }
+        .loader-spinner {
+            width: 60px; height: 60px;
+            border: 5px solid rgba(255,255,255,0.1);
+            border-top: 5px solid var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+            box-shadow: 0 0 20px rgba(0, 206, 201, 0.3);
+        }
+        .loader-text {
+            font-size: 18px; font-weight: bold; letter-spacing: 1px;
+            margin-bottom: 10px; color: white;
+        }
+        .progress-container {
+            width: 250px; height: 6px; background: #222; border-radius: 3px; overflow: hidden; position: relative;
+        }
+        .progress-bar {
+            height: 100%; width: 0%; background: var(--primary);
+            box-shadow: 0 0 10px var(--primary);
+            transition: width 0.1s linear;
+        }
+        .percent { margin-top: 10px; color: #666; font-size: 12px; }
+
+        @keyframes spin { 0% {transform: rotate(0deg);} 100% {transform: rotate(360deg);} }
+        .fade-out { opacity: 0; pointer-events: none; }
+
         /* --- HEADER & STATS --- */
         .header {
             background: rgba(24, 24, 27, 0.95);
@@ -183,6 +216,16 @@
     </style>
 </head>
 <body>
+
+    <!-- LOADING SCREEN -->
+    <div id="loading-screen">
+        <div class="loader-spinner"></div>
+        <div class="loader-text">ЗАГРУЗКА</div>
+        <div class="progress-container">
+            <div id="loader-bar" class="progress-bar"></div>
+        </div>
+        <div id="loader-percent" class="percent">0%</div>
+    </div>
 
     <div class="header">
         <div class="stats-col">
@@ -345,15 +388,72 @@
             { n:"Ракета", p:50000000, inc:150000, ico:"fa-rocket", reqLvl: 25 }
         ];
 
+        // --- PRELOADER LOGIC ---
+        function startPreloading() {
+            // Собираем все ссылки на картинки из объектов items и cases
+            let imagesToLoad = [];
+            
+            // 1. Предметы
+            for (let key in items) {
+                items[key].forEach(it => { if(it.i) imagesToLoad.push(it.i); });
+            }
+            // 2. Кейсы
+            cases.forEach(c => { if(c.i) imagesToLoad.push(c.i); });
+
+            // Убираем дубликаты
+            imagesToLoad = [...new Set(imagesToLoad)];
+
+            let loadedCount = 0;
+            let total = imagesToLoad.length;
+            let bar = document.getElementById('loader-bar');
+            let txt = document.getElementById('loader-percent');
+            let screen = document.getElementById('loading-screen');
+
+            // Если картинок нет или 0, сразу запускаем
+            if(total === 0) {
+                finishLoading();
+                return;
+            }
+
+            function imgLoaded() {
+                loadedCount++;
+                let percent = Math.floor((loadedCount / total) * 100);
+                bar.style.width = percent + "%";
+                txt.innerText = percent + "%";
+                
+                if(loadedCount >= total) {
+                    finishLoading();
+                }
+            }
+
+            function finishLoading() {
+                setTimeout(() => {
+                    screen.classList.add('fade-out');
+                    load();         // Загружаем сохранения
+                    renderCases();  // Рендерим игру
+                    setTimeout(() => {
+                        screen.style.display = 'none';
+                    }, 500);
+                }, 400); // Небольшая пауза на 100%
+            }
+
+            imagesToLoad.forEach(src => {
+                let img = new Image();
+                img.onload = imgLoaded;
+                img.onerror = imgLoaded; // Даже если ошибка (нет файла), считаем как загруженную, чтобы не зависло
+                img.src = src;
+            });
+        }
+
         // --- CORE FUNCTIONS ---
         function load() {
             try {
-                let d = JSON.parse(localStorage.getItem('v6_save_lite')); // Новое имя сохранения для сброса старых денег
+                let d = JSON.parse(localStorage.getItem('v6_save_lite')); 
                 if(d) { 
                     balance=d.b; inventory=d.i; myBiz=d.z || [0,0,0,0,0,0,0,0]; 
                     level=d.l || 1; xp=d.x || 0; 
                     boostEndTime=d.bt || 0;
-                } else { balance=20; } // Старт с 20$
+                } else { balance=20; } 
             } catch(e) { balance=20; }
             calcXpNeeded();
             calcIncome(); 
@@ -430,13 +530,11 @@
             if(name==='home') renderCases();
         }
 
-        // --- ADVERTISING (ИСПРАВЛЕНО) ---
+        // --- ADVERTISING ---
         function watchAdBoost() {
-            // Проверка: мы ВКонтакте или просто в браузере?
             const isVK = typeof vkBridge !== 'undefined' && vkBridge.isWebView();
             
             if(isVK) {
-                 // Реальная реклама ВК
                  vkBridge.send("VKWebAppShowRewardedVideo")
                 .then(data => {
                     if (data.result) {
@@ -445,12 +543,9 @@
                 })
                 .catch(error => {
                     console.log(error);
-                    // Если реклама не загрузилась, можно дать бонус как утешение (опционально)
-                    // Или просто вывести алерт
                     alert("Реклама не загрузилась. Попробуйте позже.");
                 });
             } else {
-                // ТЕСТОВЫЙ РЕЖИМ (ДЛЯ БРАУЗЕРА ПК)
                 alert("Это тестовая реклама (так как вы не в ВК). Буст активирован!");
                 activateBoost();
             }
@@ -464,7 +559,7 @@
 
         // --- ACTIONS ---
         function doWork(e) {
-            balance += 1; // Уменьшено
+            balance += 1; 
             addXp(1); 
             updateUI(); save();
             
@@ -518,7 +613,7 @@
 
         function buyBiz(i) {
             let b = bizList[i];
-            if(level < b.reqLvl) return; // Security check
+            if(level < b.reqLvl) return;
 
             let price = Math.floor(b.p * Math.pow(1.15, myBiz[i] || 0));
             if(balance >= price) { 
@@ -554,7 +649,7 @@
         function spin() {
             if(balance < currCase.p) { showError(); return; }
             balance -= currCase.p; 
-            addXp(currCase.xp || 5); // Add XP for spin
+            addXp(currCase.xp || 5); 
             updateUI(); save();
             
             let btn = document.getElementById('spin-btn'); btn.disabled = true; btn.innerText = "КРУТИМ...";
@@ -622,7 +717,8 @@
         function showError() { document.getElementById('error-modal').style.display = 'flex'; }
         function closeError() { document.getElementById('error-modal').style.display = 'none'; }
 
-        load(); renderCases();
+        // ЗАПУСКАЕМ ЗАГРУЗКУ ВМЕСТО ПРЯМОГО LOAD
+        startPreloading();
     </script>
 </body>
-        </html>
+                                       </html>
