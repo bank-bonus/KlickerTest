@@ -44,40 +44,25 @@
         #loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #09090b;
-            z-index: 9999;
+            z-index: 10000;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: opacity 0.5s ease;
+            transition: opacity 0.3s ease; /* Быстрое исчезновение */
         }
-        .loader-logo {
-            font-size: 60px; margin-bottom: 20px;
-            animation: pulseLogo 1.5s infinite alternate;
-        }
-        .loader-bar-bg {
-            width: 200px; height: 6px; background: #222; border-radius: 10px; overflow: hidden;
-        }
-        .loader-bar-fill {
-            height: 100%; width: 0%; background: var(--primary); 
-            box-shadow: 0 0 15px var(--primary); transition: width 0.2s;
-        }
-        .loader-text { margin-top: 15px; color: #666; font-size: 12px; font-weight: bold; letter-spacing: 1px; }
+        .loader-logo { font-size: 60px; margin-bottom: 20px; animation: pulseLogo 1.5s infinite alternate; }
+        .loader-bar-bg { width: 60%; max-width: 300px; height: 6px; background: #222; border-radius: 10px; overflow: hidden; border: 1px solid #333; }
+        .loader-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), #00e5ff); transition: width 0.1s linear; }
+        .loader-text { margin-top: 15px; color: #888; font-size: 11px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; }
 
-        @keyframes pulseLogo {
-            0% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(140, 82, 255, 0.3)); }
-            100% { transform: scale(1.1); filter: drop-shadow(0 0 25px rgba(140, 82, 255, 0.8)); }
-        }
+        @keyframes pulseLogo { 0% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(140, 82, 255, 0.3)); } 100% { transform: scale(1.1); filter: drop-shadow(0 0 25px rgba(140, 82, 255, 0.8)); } }
 
         /* --- ANIMATIONS --- */
         @keyframes caseFloat {
             0% { transform: translateY(0px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.1); }
-            50% { transform: translateY(-8px); box-shadow: 0 15px 40px var(--case-glow); border-color: var(--case-border); }
+            50% { transform: translateY(-6px); box-shadow: 0 15px 30px var(--case-glow); border-color: var(--case-border); }
             100% { transform: translateY(0px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.1); }
         }
-        @keyframes shimmer {
-            0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; }
-        }
-        @keyframes pulseGlow {
-            0% { box-shadow: 0 0 0 0 rgba(0, 184, 148, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(0, 184, 148, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 184, 148, 0); }
-        }
+        @keyframes shimmer { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes pulseGlow { 0% { box-shadow: 0 0 0 0 rgba(0, 184, 148, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(0, 184, 148, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 184, 148, 0); } }
         @keyframes neonSpin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         /* --- HEADER & STATS --- */
@@ -145,7 +130,7 @@
         }
         .case-card:active { transform: scale(0.95); }
         .case-card:nth-child(even) { animation-delay: 2s; }
-        .case-img-icon { width: 75px; height: 75px; object-fit: contain; margin: 5px 0 10px; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5)); pointer-events: none; }
+        .case-img-icon { width: 75px; height: 75px; object-fit: contain; margin: 5px 0 10px; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5)); pointer-events: none; display: block; margin-left: auto; margin-right: auto;}
         .case-name { font-weight: 700; font-size: 13px; margin-bottom: 6px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
         .case-price { background: rgba(0,0,0,0.5); padding: 4px 10px; border-radius: 12px; font-size: 11px; color: #ffcc00; font-weight: bold; display: inline-block; border: 1px solid rgba(255, 204, 0, 0.15); }
 
@@ -290,10 +275,10 @@
 
     <div id="modal-generic" class="modal-overlay"><div class="simple-card" id="modal-content"></div></div>
 
-    <!-- NAVBAR WITH UPDATED ICONS -->
+    <!-- NAVBAR -->
     <div class="nav-bar">
         <button class="nav-item active" onclick="setTab('home', this)">
-            <img src="https://cdn-icons-png.flaticon.com/512/2928/2928883.png" class="nav-icon" alt="Cases">
+            <img src="https://cdn-icons-png.flaticon.com/512/9328/9328963.png" class="nav-icon" alt="Cases">
             <span>Кейсы</span>
         </button>
         <button class="nav-item" onclick="setTab('shop', this)">
@@ -312,31 +297,31 @@
         function hapticHeavy() { if(vkBridge.supports("VKWebAppTapticImpactOccurred")) vkBridge.send("VKWebAppTapticImpactOccurred", {"style": "heavy"}); }
         function hapticSuccess() { if(vkBridge.supports("VKWebAppTapticNotificationOccurred")) vkBridge.send("VKWebAppTapticNotificationOccurred", {"type": "success"}); }
 
-        // --- DATA ---
+        // --- DATA VARIABLES ---
         let balance = 0, inventory = [], myBiz = [0,0,0,0,0,0,0,0], income = 0, level = 1, xp = 0, xpToNext = 500, boostEndTime = 0;
+        let isDataLoaded = false; // Важный флаг для защиты сохранений
 
         // ITEMS
         const items = {
-            trash: [ {n:"Стикер", p:2, r:1, i:"https://cdn-icons-png.flaticon.com/512/4525/4525026.png"}, {n:"Брелок", p:5, r:1, i:"https://cdn-icons-png.flaticon.com/512/3524/3524335.png"} ],
-            common: [ {n:"Наушники", p:20, r:2, i:"https://cdn-icons-png.flaticon.com/512/2776/2776851.png"}, {n:"Клавиатура", p:40, r:2, i:"https://cdn-icons-png.flaticon.com/512/5806/5806322.png"}, {n:"Флешка", p:15, r:2, i:"https://cdn-icons-png.flaticon.com/512/766/766023.png"} ],
-            rare: [ {n:"iPhone 15", p:120, r:3, i:"https://cdn-icons-png.flaticon.com/512/644/644458.png"}, {n:"PS5", p:80, r:3, i:"https://cdn-icons-png.flaticon.com/512/3081/3081335.png"}, {n:"Дрон", p:200, r:3, i:"https://cdn-icons-png.flaticon.com/512/3063/3063078.png"} ],
-            epic: [ {n:"MacBook", p:300, r:4, i:"https://cdn-icons-png.flaticon.com/512/456/456283.png"}, {n:"PC", p:500, r:4, i:"https://cdn-icons-png.flaticon.com/512/2888/2888704.png"}, {n:"Кольцо", p:600, r:4, i:"https://cdn-icons-png.flaticon.com/512/1255/1255885.png"} ],
-            leg: [ {n:"Tesla", p:5000, r:5, i:"https://cdn-icons-png.flaticon.com/512/3233/3233827.png"}, {n:"Вилла", p:15000, r:5, i:"https://cdn-icons-png.flaticon.com/512/2412/2412239.png"}, {n:"Слиток", p:10000, r:5, i:"https://cdn-icons-png.flaticon.com/512/261/261695.png"} ],
-            god: [ {n:"Яхта", p:25000, r:6, i:"https://cdn-icons-png.flaticon.com/512/2453/2453257.png"}, {n:"Самолет", p:80000, r:6, i:"https://cdn-icons-png.flaticon.com/512/785/785114.png"} ],
-            mythic: [ {n:"Биткоин", p:40000, r:7, i:"https://cdn-icons-png.flaticon.com/512/5968/5968260.png"}, {n:"Робот", p:130000, r:7, i:"https://cdn-icons-png.flaticon.com/512/2040/2040520.png"} ],
-            cosmic: [ {n:"Ракета", p:500000, r:8, i:"https://cdn-icons-png.flaticon.com/512/1067/1067357.png"}, {n:"Планета", p:1000000, r:8, i:"https://cdn-icons-png.flaticon.com/512/3212/3212567.png"} ]
+            trash: [ {n:"Стикер", p:2, r:1, i:"sticker.png"}, {n:"Брелок", p:5, r:1, i:"sock.png"}, {n:"Фантик", p:1, r:1, i:"paper.png"}, {n:"Камень", p:3, r:1, i:"stone.png"}, {n:"Скрепка", p:4, r:1, i:"clip.png"}, {n:"Пуговица", p:2, r:1, i:"button.png"}, {n:"Шнурок", p:3, r:1, i:"lace.png"} ],
+            common: [ {n:"Наушники", p:20, r:2, i:"headphones.png"}, {n:"Клавиатура", p:40, r:2, i:"keyboard.png"}, {n:"Флешка", p:15, r:2, i:"usb.png"}, {n:"Мышка", p:25, r:2, i:"mouse.png"}, {n:"Футболка", p:30, r:2, i:"tshirt.png"}, {n:"Кепка", p:35, r:2, i:"cap.png"}, {n:"Кружка", p:10, r:2, i:"mug.png"} ],
+            rare: [ {n:"iPhone 15", p:120, r:3, i:"iphone.png"}, {n:"PS5", p:80, r:3, i:"ps5.png"}, {n:"Часы", p:100, r:3, i:"watch.png"}, {n:"Планшет", p:150, r:3, i:"tablet.png"}, {n:"Дрон", p:200, r:3, i:"drone.png"}, {n:"Колонка", p:90, r:3, i:"speaker.png"}, {n:"Камера", p:180, r:3, i:"camera.png"} ],
+            epic: [ {n:"MacBook", p:300, r:4, i:"macbook.png"}, {n:"PC", p:500, r:4, i:"pc.png"}, {n:"Самокат", p:400, r:4, i:"scooter.png"}, {n:"Кресло", p:350, r:4, i:"chair.png"}, {n:"Монитор", p:450, r:4, i:"monitor.png"}, {n:"Кольцо", p:600, r:4, i:"ring.png"}, {n:"Сумка", p:700, r:4, i:"bag.png"} ],
+            leg: [ {n:"Tesla", p:5000, r:5, i:"tesla.png"}, {n:"Вилла", p:15000, r:5, i:"house.png"}, {n:"Байк", p:8000, r:5, i:"bike.png"}, {n:"Слиток", p:10000, r:5, i:"goldbar.png"}, {n:"Квадроцикл", p:6000, r:5, i:"quad.png"}, {n:"Ролексы", p:12000, r:5, i:"rolex.png"}, {n:"Ваза", p:9000, r:5, i:"vase.png"} ],
+            god: [ {n:"Яхта", p:25000, r:6, i:"yacht.png"}, {n:"Самолет", p:80000, r:6, i:"plane.png"}, {n:"Вертолет", p:40000, r:6, i:"heli.png"}, {n:"Особняк", p:60000, r:6, i:"mansion.png"}, {n:"Остров", p:90000, r:6, i:"island.png"}, {n:"Поезд", p:70000, r:6, i:"train.png"}, {n:"Лимузин", p:30000, r:6, i:"limo.png"} ],
+            mythic: [ {n:"Биткоин", p:40000, r:7, i:"bitcoin.png"}, {n:"Серверная", p:120000, r:7, i:"server.png"}, {n:"ИИ Ядро", p:150000, r:7, i:"ai_core.png"}, {n:"Квант. чип", p:110000, r:7, i:"chip.png"}, {n:"Робот", p:130000, r:7, i:"robot.png"}, {n:"Лазер", p:140000, r:7, i:"laser.png"}, {n:"Экзоскелет", p:160000, r:7, i:"exo.png"} ],
+            cosmic: [ {n:"МКС", p:200000, r:8, i:"iss.png"}, {n:"База Луна", p:500000, r:8, i:"moonbase.png"}, {n:"Марсоход", p:250000, r:8, i:"rover.png"}, {n:"Спутник", p:220000, r:8, i:"satellite.png"}, {n:"НЛО", p:400000, r:8, i:"ufo.png"}, {n:"Скафандр", p:300000, r:8, i:"spacesuit.png"}, {n:"Звезда", p:1000000, r:8, i:"star_shard.png"} ]
         };
 
         const cases = [
-            { id:0, n:"Стартовый", p:10, i:"https://cdn-icons-png.flaticon.com/512/1170/1170679.png", pool:[...items.trash, ...items.common], w:[80,20], xp:5, colorVar: '--c-common' },
-            { id:1, n:"Профи", p:100, i:"https://cdn-icons-png.flaticon.com/512/2928/2928883.png", pool:[...items.common, ...items.rare, ...items.epic], w:[60,30,10], xp:20, colorVar: '--c-rare' },
-            { id:2, n:"Мажор", p:1000, i:"https://cdn-icons-png.flaticon.com/512/4397/4397441.png", pool:[...items.rare, ...items.epic, ...items.leg], w:[60,25,15], xp:50, colorVar: '--c-epic' },
-            { id:3, n:"Олигарх", p:50000, i:"https://cdn-icons-png.flaticon.com/512/2534/2534204.png", pool:[...items.leg, ...items.god, ...items.mythic], w:[50,40,10], xp:200, colorVar: '--c-leg' },
-            { id:4, n:"Космос", p:250000, i:"https://cdn-icons-png.flaticon.com/512/4151/4151591.png", pool:[...items.god, ...items.mythic, ...items.cosmic], w:[50,45,5], xp:1000, colorVar: '--c-space' },
-            { id:5, n:"СЕКРЕТНЫЙ", p:10000000, i:"https://cdn-icons-png.flaticon.com/512/9135/9135967.png", pool:[...items.mythic, ...items.cosmic], w:[40,60], xp:5000, colorVar: '--c-secret' }
+            { id:0, n:"Стартовый", p:10, i:"case_1.png", pool:[...items.trash, ...items.common], w:[80,20], xp:5, colorVar: '--c-common' },
+            { id:1, n:"Профи", p:100, i:"case_2.png", pool:[...items.common, ...items.rare, ...items.epic], w:[60,30,10], xp:20, colorVar: '--c-rare' },
+            { id:2, n:"Мажор", p:1000, i:"case_3.png", pool:[...items.rare, ...items.epic, ...items.leg], w:[60,25,15], xp:50, colorVar: '--c-epic' },
+            { id:3, n:"Олигарх", p:50000, i:"case_4.png", pool:[...items.leg, ...items.god, ...items.mythic], w:[50,40,10], xp:200, colorVar: '--c-leg' },
+            { id:4, n:"Космос", p:250000, i:"case_5.png", pool:[...items.god, ...items.mythic, ...items.cosmic], w:[50,45,5], xp:1000, colorVar: '--c-space' },
+            { id:5, n:"СЕКРЕТНЫЙ", p:10000000, i:"case_6.png", pool:[...items.mythic, ...items.cosmic], w:[40,60], xp:5000, colorVar: '--c-secret' }
         ];
 
-        // ADDED ICONS FOR BUSINESS
         const bizList = [
             { n:"Ларек", p:50, inc:1, reqLvl: 1, img: "https://cdn-icons-png.flaticon.com/512/1069/1069102.png" }, 
             { n:"Такси", p:250, inc:5, reqLvl: 2, img: "https://cdn-icons-png.flaticon.com/512/2555/2555013.png" }, 
@@ -348,64 +333,119 @@
             { n:"Космодром", p:50000000, inc:150000, reqLvl: 25, img: "https://cdn-icons-png.flaticon.com/512/1067/1067357.png" }
         ];
 
-        // --- PRELOADER LOGIC ---
-        function preloadAssets() {
-            let images = [];
-            // Collect all unique images
-            cases.forEach(c => images.push(c.i));
-            bizList.forEach(b => images.push(b.img));
-            Object.values(items).forEach(cat => cat.forEach(i => images.push(i.i)));
+        // --- PRELOAD & INIT ---
+        function startPreloadAndData() {
+            // 1. Сначала грузим КЕЙСЫ (критично для визуала)
+            let criticalImages = [];
+            cases.forEach(c => criticalImages.push(c.i));
             
-            let total = images.length;
+            let total = criticalImages.length;
             let loaded = 0;
             let bar = document.getElementById('loader-bar');
             let txt = document.getElementById('loader-text');
 
-            if(total === 0) { hideLoader(); return; }
+            // Защита: через 3 сек убираем лоадер, даже если картинки не загрузились
+            let safetyTimer = setTimeout(finishLoading, 3000); 
 
-            images.forEach(src => {
+            if(total === 0) { finishLoading(); return; }
+
+            criticalImages.forEach(src => {
                 let img = new Image();
                 img.src = src;
-                img.onload = () => updateLoader();
-                img.onerror = () => updateLoader();
+                img.onload = onImgLoad;
+                img.onerror = onImgLoad;
             });
 
-            function updateLoader() {
+            function onImgLoad() {
                 loaded++;
                 let pct = Math.floor((loaded/total) * 100);
                 bar.style.width = pct + "%";
-                txt.innerText = "ЗАГРУЗКА РЕСУРСОВ... " + pct + "%";
-                if(loaded >= total) setTimeout(hideLoader, 500);
+                txt.innerText = "ЗАГРУЗКА... " + pct + "%";
+                if(loaded >= total) finishLoading();
+            }
+
+            function finishLoading() {
+                clearTimeout(safetyTimer);
+                hideLoader();
+                // 2. После скрытия лоадера грузим ДАННЫЕ ИЗ ВК
+                loadData(); 
             }
         }
 
         function hideLoader() {
             let l = document.getElementById('loader');
             l.style.opacity = 0;
-            setTimeout(() => { l.style.display = 'none'; }, 500);
+            setTimeout(() => { l.style.display = 'none'; }, 300);
         }
 
-        // --- STORAGE ---
+        // --- CORE FUNCTIONS (Render Immediately!) ---
+        function renderCases() {
+            let c = document.getElementById('case-list'); c.innerHTML='';
+            cases.forEach(item => {
+                let d = document.createElement('div'); d.className = 'case-card';
+                d.style.setProperty('--case-glow', `var(${item.colorVar})`);
+                d.style.setProperty('--case-border', `var(${item.colorVar})`);
+                d.onclick = () => { hapticLight(); openGame(item.id); };
+                d.innerHTML = `
+                    <img src="${item.i}" class="case-img-icon" alt="${item.n}">
+                    <div class="case-name">${item.n}</div>
+                    <div class="case-price" style="color:var(${item.colorVar})">${item.p.toLocaleString()} $</div>
+                `;
+                c.appendChild(d);
+            });
+        }
+
+        function renderShop() {
+            let c = document.getElementById('shop-list'); c.innerHTML='';
+            bizList.forEach((b, i) => {
+                let count = myBiz[i] || 0;
+                let price = Math.floor(b.p * Math.pow(1.15, count));
+                let isLocked = level < b.reqLvl;
+                let div = document.createElement('div'); 
+                div.className = `shop-item ${isLocked ? 'locked' : ''}`;
+                div.innerHTML = `
+                    <div class="shop-icon-box"><img src="${b.img}" class="shop-icon-img"></div>
+                    <div class="shop-info">
+                        <div style="font-weight:bold; color:white; font-size:13px">${b.n}</div>
+                        <div style="font-size:10px; color:#888">+${b.inc}/сек | Есть: ${count}</div>
+                    </div>
+                    <button class="buy-btn ${balance>=price && !isLocked ?'':'disabled'}" onclick="buyBiz(${i})">${isLocked ? 'LVL '+b.reqLvl : price.toLocaleString()+' $'}</button>
+                `;
+                c.appendChild(div);
+            });
+        }
+
+        // --- STORAGE LOGIC ---
         function loadData() {
             vkBridge.send('VKWebAppStorageGet', { keys: ['save_data'] })
                 .then(data => {
-                    if (data.keys[0].value) {
+                    if (data.keys && data.keys.length > 0 && data.keys[0].value) {
                         try {
                             const d = JSON.parse(data.keys[0].value);
                             balance = d.b || 0; inventory = d.i || []; myBiz = d.z || [0,0,0,0,0,0,0,0];
                             level = d.l || 1; xp = d.x || 0; boostEndTime = d.bt || 0; calcXpNeeded();
-                        } catch(e) { }
+                        } catch(e) { console.error(e); }
                     } else { balance = 20; }
+                    
+                    isDataLoaded = true; // РАЗРЕШАЕМ СОХРАНЕНИЕ
                     updateUI();
+                    
+                    // Сохраняем каждые 5 сек, но ТОЛЬКО если данные загрузились
+                    setInterval(saveData, 5000);
                 })
-                .catch(() => { balance = 20; updateUI(); });
+                .catch(() => { 
+                    balance = 20; isDataLoaded = true; updateUI(); 
+                    setInterval(saveData, 5000);
+                });
         }
+
         function saveData() {
+            if (!isDataLoaded) return; // Защита от стирания данных
             const data = { b:balance, i:inventory, z:myBiz, l:level, x:xp, bt:boostEndTime };
             vkBridge.send('VKWebAppStorageSet', { key: 'save_data', value: JSON.stringify(data) });
         }
 
-        // --- LOGIC ---
+        // --- GAME LOGIC ---
         function calcXpNeeded() { xpToNext = level * 800; }
         
         function addXp(amount) {
@@ -422,18 +462,14 @@
             let t=0; myBiz.forEach((c,i) => { if(bizList[i]) t += c * bizList[i].inc; });
             let now = Date.now();
             if(now < boostEndTime) {
-                t = t * 2; 
-                document.getElementById('boost-timer').style.display = 'inline';
+                t = t * 2; document.getElementById('boost-timer').style.display = 'inline';
                 let left = Math.ceil((boostEndTime - now)/1000);
                 document.getElementById('boost-timer').innerText = `(${left}s)`;
-            } else {
-                document.getElementById('boost-timer').style.display = 'none';
-            }
+            } else { document.getElementById('boost-timer').style.display = 'none'; }
             income=t; document.getElementById('ui-income').innerText = t.toLocaleString(); 
         }
 
         setInterval(() => { if(income>0) { balance+=income; updateUI(); } calcIncome(); }, 1000);
-        setInterval(() => { saveData(); }, 10000);
 
         function updateUI() { 
             document.getElementById('ui-balance').innerText = Math.floor(balance).toLocaleString(); 
@@ -473,43 +509,6 @@
             let x = e.clientX || rect.left + rect.width/2; let y = e.clientY || rect.top;
             float.style.left = x + 'px'; float.style.top = y + 'px';
             document.body.appendChild(float); setTimeout(() => float.remove(), 800);
-        }
-
-        function renderCases() {
-            let c = document.getElementById('case-list'); c.innerHTML='';
-            cases.forEach(item => {
-                let d = document.createElement('div'); d.className = 'case-card';
-                d.style.setProperty('--case-glow', `var(${item.colorVar})`);
-                d.style.setProperty('--case-border', `var(${item.colorVar})`);
-                d.onclick = () => { hapticLight(); openGame(item.id); };
-                d.innerHTML = `
-                    <img src="${item.i}" class="case-img-icon">
-                    <div class="case-name">${item.n}</div>
-                    <div class="case-price" style="color:var(${item.colorVar})">${item.p.toLocaleString()} $</div>
-                `;
-                c.appendChild(d);
-            });
-        }
-
-        function renderShop() {
-            let c = document.getElementById('shop-list'); c.innerHTML='';
-            bizList.forEach((b, i) => {
-                let count = myBiz[i] || 0;
-                let price = Math.floor(b.p * Math.pow(1.15, count));
-                let isLocked = level < b.reqLvl;
-                let div = document.createElement('div'); 
-                div.className = `shop-item ${isLocked ? 'locked' : ''}`;
-                // Используем картинку вместо звезды
-                div.innerHTML = `
-                    <div class="shop-icon-box"><img src="${b.img}" class="shop-icon-img"></div>
-                    <div class="shop-info">
-                        <div style="font-weight:bold; color:white; font-size:13px">${b.n}</div>
-                        <div style="font-size:10px; color:#888">+${b.inc}/сек | Есть: ${count}</div>
-                    </div>
-                    <button class="buy-btn ${balance>=price && !isLocked ?'':'disabled'}" onclick="buyBiz(${i})">${isLocked ? 'LVL '+b.reqLvl : price.toLocaleString()+' $'}</button>
-                `;
-                c.appendChild(div);
-            });
         }
 
         function buyBiz(i) {
@@ -609,9 +608,13 @@
             document.getElementById('modal-generic').style.display = 'flex';
         }
 
-        // INIT: Preload -> Load Data
-        preloadAssets();
-        loadData();
+        // --- INIT SEQUENCE (МГНОВЕННАЯ ОТРИСОВКА) ---
+        // 1. Сразу рисуем меню (пусть даже без данных), чтобы не было пустого экрана
+        renderCases();
+        renderShop();
+        
+        // 2. Начинаем загрузку картинок и данных
+        startPreloadAndData();
     </script>
 </body>
     </html>
